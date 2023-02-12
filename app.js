@@ -21,7 +21,17 @@ const jobApi = require('./routes/jobs')
 const authApi = require('./routes/auth')
 // authentication
 const authentication = require('./middleware/authentication');
+//swagger
+const swagger = require('swagger-ui-express')
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml')
+
+app.get('/', (req, res) => {
+  res.send(`<h1>Job api</h1>
+  <a href="/api-use">Document</a>`);
+});
 // extra packages
+app.use('/api-use', swagger.serve, swagger.setup(swaggerDocument))
 app.use(cors());
 app.use(helmet());
 app.use(xss());
@@ -32,9 +42,6 @@ const connectDB = require('./db/connect')
 // routes
 
 app.set('trust proxy', 1);
-app.get('/hello', (req, res) => {
-  res.send('jobs api');
-});
 app.use('/api/v1/auth',authApi)
 app.use('/api/v1/jobs', authentication, jobApi)
 
